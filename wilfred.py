@@ -168,12 +168,10 @@ async def on_message(message):
 
         if message.content.upper() == "!ACCEPT":
             if message.channel.id == gate:
-                await message.delete()
                 await user_accept_rules(message.author)
 
         if message.content.upper() == "!DECLINE":
             if message.channel.id == gate:
-                await message.delete()
                 await message.author.kick()
 
         
