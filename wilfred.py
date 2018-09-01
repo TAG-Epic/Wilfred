@@ -164,7 +164,8 @@ async def on_message(message):
                     await client.send_message(message.channel, "Success! Added **%s** to **%s**'s permission groups!" % (args[1], user.name))
                     
                 
-                
+        if message.channel.id == gate:
+            await message.delete()        
 
         if message.content.upper() == "!ACCEPT":
             if message.channel.id == gate:
@@ -462,9 +463,6 @@ async def on_message(message):
                 add_coins(message.author, exp_add)
                 await asyncio.sleep(30)
                 cooldown.remove(message.author.id)
-
-        if message.channel.id == gate:
-            await message.delete()
 
     except Exception as e:
         await error("[500] %s" % (e), message.channel)
