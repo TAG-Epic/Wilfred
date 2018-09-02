@@ -243,23 +243,23 @@ async def on_message(message):
                 else:
                     em = discord.Embed(title="Rank Up", description="You currently have $%s\nAfter you rank up you will have $%s\n\nAre you sure you want to rank up?*" % (str(balance), str(balance-cost)), colour=0x55FF55)
                     confirmation = await message.channel.send(embed=em)
-                    await confirmation.add_reaction("ðŸ‘")
-                    await confirmation.add_reaction("ðŸ‘Ž")
+                    await confirmation.add_reaction("\U0001F44D")
+                    await confirmation.add_reaction("\U0001F44E")
 
                     def check(reaction, user):
-                        return user == message.author and (str(reaction.emoji) == 'ðŸ‘' or str(reaction.emoji) == "ðŸ‘Ž")
+                        return user == message.author and (str(reaction.emoji) == '\U0001F44D' or str(reaction.emoji) == "\U0001F44E")
                     try:
                         reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
                     except asyncio.TimeoutError:
                         await message.channel.send('Timed Out')
                     else:
-                        if str(reaction.emoji) == "ðŸ‘":
+                        if str(reaction.emoji) == "\U0001F44D":
                             new_rank = db_query("varsity.db", "SELECT RankName FROM ranks WHERE RankID = '%s'" % (str(db_query("varsity.db", "SELECT RankID FROM ranks WHERE RankName = '%s'" % (rank))[0][0]+1)))[0][0]
                             add_coins(message.author, -cost)
                             execute_query("varsity.db", "UPDATE Members SET Rank = '%s' WHERE UserID = %s" % (new_rank, str(message.author.id)))
                             em = discord.Embed(title="Success!", description="Congratulations! You've ranked up to Rank %s" % (new_rank), colour=0x55FFFF)
                             await message.channel.send(embed=em)
-                        elif str(reaction.emoji) == "ðŸ‘Ž":
+                        elif str(reaction.emoji) == "\U0001F44E":
                             await message.channel.send("Rankup Declined")
                         await confirmation.clear_reactions()
 
