@@ -192,7 +192,7 @@ async def on_message(message):
                 if user.id == 472063067014823938:
                     await error("[418] I'm a teapot", message.channel)
                     return 
-            em = discord.Embed(title=user.name, colour=0x55FF55)
+            em = discord.Embed(title=user.name, colour=0x00AA00)
 
             rank = get_rank(user)
             em.set_author(name=rank[0], icon_url=rank[1])
