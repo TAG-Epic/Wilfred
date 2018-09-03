@@ -199,7 +199,7 @@ async def on_message(message):
 
             badges = "_ _ _ _"
             if profile[3] == 1:
-                badges = badges + " <:Staff:472147110016450576> _ _"
+                badges = badges + " <:Staff:486271130148012055> _ _"
             if profile[4] == 1:
                 badges = badges + " <:YouTuber:472150144243204096> _ _"
             if profile[5] == 1:
