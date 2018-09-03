@@ -99,22 +99,28 @@ def get_rank(user):
     rank = []
     if "Owner" in [role.name for role in user.roles]:
         rank.append("Owner")
-        rank.append("https://www.cdc.gov/healthyschools/tths/trainingcadre/images/training-cadre-icon-01.png")
+        rank.append("https://cdn.discordapp.com/emojis/486269879327129601.png")
     elif "Admin" in [role.name for role in user.roles]:
         rank.append("Admin")
-        rank.append("https://www.cdc.gov/healthyschools/tths/trainingcadre/images/training-cadre-icon-01.png")
+        rank.append("https://cdn.discordapp.com/emojis/486269879327129601.png")
     elif "Senior Moderator" in [role.name for role in user.roles]:
         rank.append("Senior Moderator")
-        rank.append("http://myndset.com/wp-content/uploads/2015/10/emceeing.png")
+        rank.append("https://cdn.discordapp.com/emojis/486269879327129601.png")
     elif "Moderator" in [role.name for role in user.roles]:
         rank.append("Moderator")
-        rank.append("http://myndset.com/wp-content/uploads/2015/10/emceeing.png")
-    elif "Helper" in [role.name for role in user.roles]:
+        rank.append("https://cdn.discordapp.com/emojis/486269879327129601.png")
+    elif "Helper" in [role.name for role in user.roles]: #deprecated (this role is being removed soon)
         rank.append("Helper")
-        rank.append("http://myndset.com/wp-content/uploads/2015/10/emceeing.png")
+        rank.append("https://cdn.discordapp.com/emojis/486269879327129601.png")
+    elif "Contributor" in [role.name for role in user.roles]:
+        rank.append("Contributor")
+        rank.append("https://cdn.discordapp.com/emojis/486265111795728384.png")
+    elif "Artist" in [role.name for role in user.roles]:
+        rank.append("Artist")
+        rank.append("https://cdn.discordapp.com/emojis/486266771418906626.png")
     else:
         rank.append("Member")
-        rank.append("http://cdn.onlinewebfonts.com/svg/img_219519.png")
+        rank.append("https://cdn.discordapp.com/emojis/486269178047627266.png")
 
     return rank
 
@@ -186,14 +192,14 @@ async def on_message(message):
                 if user.id == 472063067014823938:
                     await error("[418] I'm a teapot", message.channel)
                     return 
-            em = discord.Embed(title=user.name, colour=0x55FF55)
+            em = discord.Embed(title=user.name, colour=0x00AA00)
 
             rank = get_rank(user)
             em.set_author(name=rank[0], icon_url=rank[1])
 
             badges = "_ _ _ _"
             if profile[3] == 1:
-                badges = badges + " <:Staff:472147110016450576> _ _"
+                badges = badges + " <:Staff:486271130148012055> _ _"
             if profile[4] == 1:
                 badges = badges + " <:YouTuber:472150144243204096> _ _"
             if profile[5] == 1:
