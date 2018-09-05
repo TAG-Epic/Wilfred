@@ -151,10 +151,7 @@ async def on_message(message):
         
 
         channel = message.channel
-        settings = channel.overwrites
-        
-
-        
+   
         
 
         if message.content.upper().startswith("!ADDROLE"):
