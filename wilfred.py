@@ -137,6 +137,7 @@ async def error(reason, channel):
 
 @client.event
 async def on_message(message):
+    if message.guild == None: return #This is to stop it from api spamming
     try:
 
         global conCooldown
