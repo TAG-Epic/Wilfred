@@ -123,13 +123,13 @@ def get_rank(user):
 #--Gate Commands--
 
 #!accept
-@bot.command()
+@Bot.command(client)
 async def accept(ctx):
     if ctx.message.channel.id == gate:
         await user_accept_rules(message.author)
 
 #!decline
-@bot.command()
+@Bot.command(client)
 async def deny(ctx):
     if ctx.message.channel.id == gate:
         await message.author.kick()
@@ -137,7 +137,7 @@ async def deny(ctx):
 #--Profile/Economy Commands--      
 
 #!profile
-@bot.command()
+@Bot.command(client)
 async def profile(ctx, *args):
     message = ctx.message
     
@@ -152,7 +152,7 @@ async def profile(ctx, *args):
             await error("[418] I'm a teapot", message.channel)
             return
         
-    em = discord.Embed(title=user.name, colour=0x00AA00)
+    em = discord.Embed(title=user.name, colour=0xFF5555)
 
     rank = get_rank(user)
     em.set_author(name=rank[0], icon_url=rank[1])
@@ -175,12 +175,13 @@ async def profile(ctx, *args):
     em.add_field(name="_ _", value="_ _")
     em.add_field(name="Member Since", value=str(user.joined_at)[0:19])
     em.add_field(name="Balance", value="$"+str(int(profile[0])))
+    em.set_footer(text="In-Dev [Commit a200000.021]")
 
     await message.channel.send(embed=em)
     
 
 #!pay
-@bot.command()
+@Bot.command(client)
 async def pay(ctx, *args):
     message = ctx.message
     balance = fetch_coins(message.author)
@@ -215,7 +216,7 @@ async def pay(ctx, *args):
                 await message.channel.send("Invalid Response - Transaction Cancelled")
 
 #!rankup
-@bot.command()
+@Bot.command(client)
 async def rankup(ctx, *args):
     message = ctx.message
     rank = db_query("varsity.db", "SELECT Rank from Members WHERE UserID = %s" % (str(message.author.id)))[0][0]
@@ -255,7 +256,7 @@ async def rankup(ctx, *args):
 #!ransack  
 
 #!prestige
-@bot.command()
+@Bot.command(client)
 async def prestige(ctx, *args):
     message = ctx.message
     rank = db_query("varsity.db", "SELECT Rank from Members WHERE UserID = %s" % (str(message.author.id)))[0][0]
@@ -298,7 +299,7 @@ async def prestige(ctx, *args):
 #--Connection Commands--
 
 #!ping
-bot.command()
+@Bot.command(client)
 async def ping(ctx):
     start = time.time() * 1000
     msg = await ctx.message.channel.send("Pong!")
@@ -307,11 +308,13 @@ async def ping(ctx):
 
 
 #!connection
-bot.command()
+@Bot.command(client)
 async def connection(ctx):
+    message = ctx.message
+    global conCooldown
     if not conCooldown:
         conCooldown = True
-        async with channel.typing():
+        async with message.channel.typing():
             ping = str(int(round(st.ping(), 0)))
             down = round((st.download()/1000000), 2)
             up = round((st.upload()/1000000), 2)
@@ -329,7 +332,7 @@ async def connection(ctx):
 #--Staff Commands--
 
 #!hug
-@bot.command()
+@Bot.command(client)
 async def hug(ctx, *args):
     if "Staff" in [role.name for role in ctx.message.author.roles]:
         hug_type = random.choice(["just gave you a big hug!", "just gave you a big big hug!", "just gave you a tight squeeze!", "just gave you a bog standard hug!"])
@@ -340,7 +343,7 @@ async def hug(ctx, *args):
 
 
 #!fight
-@bot.command()
+@Bot.command(client)
 async def fight(ctx, *args):
     message = ctx.message
     if "Staff" in [role.name for role in message.author.roles]:
@@ -368,7 +371,7 @@ async def fight(ctx, *args):
 #--Admin Commands--
 
 #!badge
-@bot.command()
+@Bot.command(client)
 async def badge(ctx, *args):
     message = ctx.message
     if "Admin" in [role.name for role in message.author.roles] or "Owner" in [role.name for role in message.author.roles]:
@@ -384,7 +387,7 @@ async def badge(ctx, *args):
                 await message.channel.send("Sucessfully removed **%s Badge** from %s!" % (args[2], user.mention))
 
 #!disable
-bot.command()
+@Bot.command(client)
 async def disable(ctx, *args):
     message = ctx.message
     if "Admin" in [role.name for role in message.author.roles] or "Owner" in [role.name for role in message.author.roles]:
@@ -394,7 +397,7 @@ async def disable(ctx, *args):
             await message.channel.send(":ok_hand: Successfully disabled `%s`" % command)
 
 #!enable    
-bot.command()
+@Bot.command(client)
 async def enable(ctx, *args):
     message = ctx.message
     if "Admin" in [role.name for role in message.author.roles] or "Owner" in [role.name for role in message.author.roles]:
@@ -405,6 +408,9 @@ async def enable(ctx, *args):
         else:
             await error("[409] This command is already enabled", message.channel)
     
+
+#-----Command Register------
+
 
 #-----Event Listners-----        
         
@@ -488,12 +494,15 @@ async def on_message(message):
                 await message.channel.send("Successfully removed you from the **Server Announcements** announcement group")
 
        
-
+        elif message.content.upper().startswith("W!UPDATE"):
+            for member in message.guild.members:
+                insert_db_user(member)
+                await member.add_roles(discord.utils.get(member.guild.roles, name="-----===== Notif Roles =====-----"))
 
         if not str(message.author.id) in ignore_list:
             if not message.author.id in cooldown:
                 cooldown.append(message.author.id)
-                exp_add = random.randint(25,50)
+                exp_add = random.randint(25,50)*2500
                 add_coins(message.author, exp_add)
                 await asyncio.sleep(30)
                 cooldown.remove(message.author.id)
@@ -501,7 +510,7 @@ async def on_message(message):
         if args[0].lower() in disabled_commands:
             await error("[423] This command is currently disabled", message.channel)
         else:
-            await bot.process_commands(message)
+            await client.process_commands(message)
                         
 
     except Exception as e:
@@ -526,6 +535,12 @@ async def user_accept_rules(member):
     await member.add_roles(default_role)
     await member.add_roles(reg_role)        
         
+        
+        
+        
+        
+
+
     
 print("Test")    
 client.run("") #logs into the bot
