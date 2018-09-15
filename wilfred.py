@@ -275,6 +275,9 @@ async def on_message(message):
                 if int(args[2]) < 0:
                     await error("[400] Amount cannot be negative", message.channel)
                     return False
+                elif int(args[2]) == 0:
+                    await error("[400] Amount cannot be zero",message.channel)
+                    return False
                 else:
                     amount = args[2]
                     
