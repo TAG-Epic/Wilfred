@@ -272,7 +272,7 @@ async def on_message(message):
                 await message.channel.send("Transaction Rejected\n_ - _ `Insufficient Funds`")
             else:
                 user = discord.utils.get(message.guild.members, mention=args[1])
-                if int(args[2]) < 0:
+                if int(args[2]) <= 0:
                     await error("[400] Amount cannot be negative", message.channel)
                     return False
                 else:
