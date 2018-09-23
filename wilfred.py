@@ -23,7 +23,7 @@ ignore_list = ["388022143931383818", "426489102838530050", "427869023552667649"]
 
 Client = discord.Client()
 bot_prefix = "!"
-client = commands.Bot(command_prefix=bot_prefix)
+client = commands.Bot(command_prefix=bot_prefix, case_insensitive=True)
 
 #-----Helpers-----
 
@@ -138,8 +138,9 @@ async def deny(ctx):
 
 #!profile
 @Bot.command(client)
-async def profile(ctx, *args):
+async def profile(ctx):
     message = ctx.message
+    args = message.content.split()
     
     if len(args) <= 1:
         user = message.author
@@ -152,7 +153,7 @@ async def profile(ctx, *args):
             await error("[418] I'm a teapot", message.channel)
             return
         
-    em = discord.Embed(title=user.name, colour=0xFF5555)
+    em = discord.Embed(title=user.name, colour=0x00AA00)
 
     rank = get_rank(user)
     em.set_author(name=rank[0], icon_url=rank[1])
@@ -175,22 +176,23 @@ async def profile(ctx, *args):
     em.add_field(name="_ _", value="_ _")
     em.add_field(name="Member Since", value=str(user.joined_at)[0:19])
     em.add_field(name="Balance", value="$"+str(int(profile[0])))
-    em.set_footer(text="In-Dev [Commit a200000.021]")
+    #em.set_footer(text="")
 
     await message.channel.send(embed=em)
     
 
 #!pay
 @Bot.command(client)
-async def pay(ctx, *args):
+async def pay(ctx):
     message = ctx.message
+    args = message.content.split()
     balance = fetch_coins(message.author)
     if int(args[2]) > balance:
         await message.channel.send("Transaction Rejected\n_ - _ `Insufficient Funds`")
     else:
         user = discord.utils.get(message.guild.members, mention=args[1])
-        if int(args[2]) <= 0:
-            await error("[400] Amount cannot be less than $1", message.channel)
+        if int(args[2]) < 0:
+            await error("[400] Amount cannot be negative", message.channel)
             return False
         else:
             amount = args[2]
@@ -217,8 +219,9 @@ async def pay(ctx, *args):
 
 #!rankup
 @Bot.command(client)
-async def rankup(ctx, *args):
+async def rankup(ctx):
     message = ctx.message
+    args = message.content.split()
     rank = db_query("varsity.db", "SELECT Rank from Members WHERE UserID = %s" % (str(message.author.id)))[0][0]
     tier = db_query("varsity.db", "SELECT Tier from Members WHERE UserID = %s" % (str(message.author.id)))[0][0]
     if rank == "X":
@@ -257,8 +260,9 @@ async def rankup(ctx, *args):
 
 #!prestige
 @Bot.command(client)
-async def prestige(ctx, *args):
+async def prestige(ctx):
     message = ctx.message
+    args = message.content.split()
     rank = db_query("varsity.db", "SELECT Rank from Members WHERE UserID = %s" % (str(message.author.id)))[0][0]
     tier = db_query("varsity.db", "SELECT Tier from Members WHERE UserID = %s" % (str(message.author.id)))[0][0]
     if not rank == "X":
@@ -311,6 +315,7 @@ async def ping(ctx):
 @Bot.command(client)
 async def connection(ctx):
     message = ctx.message
+    args = message.content.split()
     global conCooldown
     if not conCooldown:
         conCooldown = True
@@ -333,7 +338,8 @@ async def connection(ctx):
 
 #!hug
 @Bot.command(client)
-async def hug(ctx, *args):
+async def hug(ctx):
+    args = ctx.message.content.split()
     if "Staff" in [role.name for role in ctx.message.author.roles]:
         hug_type = random.choice(["just gave you a big hug!", "just gave you a big big hug!", "just gave you a tight squeeze!", "just gave you a bog standard hug!"])
         await ctx.message.channel.send("%s - %s %s :hugging:" % (args[1], ctx.message.author.mention, hug_type))
@@ -344,8 +350,9 @@ async def hug(ctx, *args):
 
 #!fight
 @Bot.command(client)
-async def fight(ctx, *args):
+async def fight(ctx):
     message = ctx.message
+    args = message.content.split()
     if "Staff" in [role.name for role in message.author.roles]:
         loss = 0
         init = message.author.mention
@@ -372,8 +379,9 @@ async def fight(ctx, *args):
 
 #!badge
 @Bot.command(client)
-async def badge(ctx, *args):
+async def badge(ctx):
     message = ctx.message
+    args = message.content.split()
     if "Admin" in [role.name for role in message.author.roles] or "Owner" in [role.name for role in message.author.roles]:
         if args[1].upper() == "ADD":
             if args[2] in ["Staff", "YouTuber", "ValuedMember", "Veteran"]:
@@ -390,8 +398,12 @@ async def badge(ctx, *args):
 @Bot.command(client)
 async def disable(ctx, *args):
     message = ctx.message
+    args = message.content.split()
     if "Admin" in [role.name for role in message.author.roles] or "Owner" in [role.name for role in message.author.roles]:
         command = "!"+args[1].lower()
+        if command == "!disable" or command == "!enable":
+            await error("[401] You cannot disable that command!", message.channel)
+            
         if not command in disabled_commands:
             disabled_commands.append(command)
             await message.channel.send(":ok_hand: Successfully disabled `%s`" % command)
@@ -400,6 +412,7 @@ async def disable(ctx, *args):
 @Bot.command(client)
 async def enable(ctx, *args):
     message = ctx.message
+    args = message.content.split()
     if "Admin" in [role.name for role in message.author.roles] or "Owner" in [role.name for role in message.author.roles]:
         command = "!"+args[1]
         if command in disabled_commands:
@@ -407,7 +420,68 @@ async def enable(ctx, *args):
             await message.channel.send(":ok_hand: Successfully enabled `%s`" % command)
         else:
             await error("[409] This command is already enabled", message.channel)
-    
+
+@Bot.command(client)
+async def statmod(ctx, *args):
+    message = ctx.message
+    args = message.content.split()
+    if "Admin" in [role.name for role in message.author.roles]:
+        user = discord.utils.get(message.guild.members, mention=args[1])
+        subcommand = args[2]
+        if subcommand.upper() == "SET":
+            if args[3].upper() == "BALANCE":
+                set_coins(user, int(args[4]))
+                await message.channel.send(":ok_hand: Successfully set %s's balance to $%s" % (user.mention, args[4]))
+
+            if args[3].upper() == "RANK":
+                if not args[4] in ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]:
+                    await error("[400] Invalid Rank")
+                else:    
+                    execute_query("varsity.db", "UPDATE Members SET Rank = '%s' WHERE UserID = %s" % (args[4], str(message.author.id)))
+                    await message.channel.send(":ok_hand: Successfully set %s's rank to %s!" % (user.mention, args[4]))
+
+            if args[3].upper() == "TIER":
+                if not args[4] in range(0, 3):
+                    await error("[400] Invalid Tier")
+                else:
+                    execute_query("varsity.db", "UPDATE Members SET Tier = %s where UserID = %s" % (str(args[4]), str(message.author.id)))
+                    await message.channel.send(":ok_hand: Successfully set %s's tier to %s!" % (user.mention, args[4]))
+
+        elif subcommand.upper() == "ADD":
+            if args[3].upper() == "BALANCE":
+                add_coins(user, int(args[4]))
+                await message.channel.send(":ok_hand: Successfully added $%s to %s's balance!" % (args[4], user.mention))
+
+        elif subcommand.upper() == "SUB":
+            if args[3].upper() == "BALANCE":
+                add_coins(user, -int(args[4]))
+                await message.channel.send(":ok_hand: Successfully negated $%s to %s's balance!" % (args[4], user.mention))    
+
+        elif subcommand.upper() == "WIPE":
+            em = discord.Embed(title="STAT WIPE", description="You are about to wipe the stats of %s!\n\n This will completely reset their stats as if they were a new user.\n**THIS OPERATION CANNOT BE REVERSED**\n\n**Punishments will not be reset**\n\nPlease wait **15 Seconds** before confirming this action." % (user.mention), colour=0xAA0000)
+            em.set_thumbnail(url="https://www.freeiconspng.com/uploads/status-warning-icon-png-29.png")
+            confirmation = await message.channel.send(embed=em)
+            await asyncio.sleep(15)
+            await confirmation.add_reaction("\U0001F44D")
+            await confirmation.add_reaction("\U0001F44E")
+
+            def check(reaction, user):
+                return user == message.author and (str(reaction.emoji) == '\U0001F44D' or str(reaction.emoji) == "\U0001F44E")
+            try:
+                reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                await message.channel.send('Timed Out')
+                await confirmation.clear_reactions()
+            else:
+                if str(reaction.emoji) == "\U0001F44D":
+                    execute_query("varsity.db", "DELETE FROM Members WHERE UserID = %s" % (user.id))
+                    insert_db_user(user) #Recreates the user with default stats
+                    await message.channel.send(":ok_hand: Complete! %s's Stats have been wiped!" % (user.mention))
+                    
+                elif str(reaction.emoji) == "\U0001F44E":
+                    await message.channel.send("Operation Cancelled")
+                await confirmation.clear_reactions()
+            
 
 #-----Command Register------
 
@@ -442,10 +516,7 @@ async def on_message(message):
       
         elif message.content.upper().startswith("!RANSACK"):
             await error("[501] Not Implemented", message.channel)
-            
 
-        
-            
         #--Role Commands--             
 
         elif message.content.upper().startswith("!WINDOWS"):
@@ -499,18 +570,17 @@ async def on_message(message):
                 insert_db_user(member)
                 await member.add_roles(discord.utils.get(member.guild.roles, name="-----===== Notif Roles =====-----"))
 
+        await client.process_commands(message)
+
         if not str(message.author.id) in ignore_list:
             if not message.author.id in cooldown:
                 cooldown.append(message.author.id)
-                exp_add = random.randint(25,50)*2500
+                exp_add = random.randint(25,50)
                 add_coins(message.author, exp_add)
                 await asyncio.sleep(30)
                 cooldown.remove(message.author.id)
 
-        if args[0].lower() in disabled_commands:
-            await error("[423] This command is currently disabled", message.channel)
-        else:
-            await client.process_commands(message)
+        
                         
 
     except Exception as e:
