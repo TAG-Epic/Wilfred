@@ -173,7 +173,7 @@ async def profile(ctx):
     em.add_field(name="Rank", value=profile[1])
     em.add_field(name="Tier", value=profile[2])
 
-    em.add_field(name="_ _", value="_ _")
+    em.add_field(name="Pumpkins", value="0/15")
     em.add_field(name="Member Since", value=str(user.joined_at)[0:19])
     em.add_field(name="Balance", value="$"+str(int(profile[0])))
     #em.set_footer(text="")
@@ -266,10 +266,10 @@ async def prestige(ctx):
     rank = db_query("varsity.db", "SELECT Rank from Members WHERE UserID = %s" % (str(message.author.id)))[0][0]
     tier = db_query("varsity.db", "SELECT Tier from Members WHERE UserID = %s" % (str(message.author.id)))[0][0]
     if not rank == "X":
-        pass
+        await error("[401] You need to reach rank X first!", message.channel)
     else:
         if tier == 3:
-            pass
+            await error("[401] You have reached max prestige!", message.channel) 
         else:
             em = discord.Embed(title="WARNING", description="Prestiging will reset your balance and rank back to defaults but will upgrade your tier and unlock new perks.\n\nRanking up again will cost more than it did last time!\n\nAre you sure you want to prestige? **Y/N**", colour=0xFF5555) 
             await message.channel.send(embed=em)
