@@ -173,7 +173,7 @@ async def profile(ctx):
     em.add_field(name="Rank", value=profile[1])
     em.add_field(name="Tier", value=profile[2])
 
-    em.add_field(name="_ _", value="_ _")
+    em.add_field(name="Pumpkins", value="0/15")
     em.add_field(name="Member Since", value=str(user.joined_at)[0:19])
     em.add_field(name="Balance", value="$"+str(int(profile[0])))
     #em.set_footer(text="")
