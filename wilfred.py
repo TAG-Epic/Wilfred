@@ -409,6 +409,8 @@ async def disable(ctx, *args):
         if not command in disabled_commands:
             disabled_commands.append(command)
             await message.channel.send(":ok_hand: Successfully disabled `%s`" % command)
+    else:
+        await error("[403] You do not have permission to use this command")
 
 #!enable    
 @Bot.command(client)
@@ -422,6 +424,8 @@ async def enable(ctx, *args):
             await message.channel.send(":ok_hand: Successfully enabled `%s`" % command)
         else:
             await error("[409] This command is already enabled", message.channel)
+    else:
+        await error("[403] You do not have permission to use this command")
 
 @Bot.command(client)
 async def statmod(ctx, *args):
@@ -483,6 +487,8 @@ async def statmod(ctx, *args):
                 elif str(reaction.emoji) == "\U0001F44E":
                     await message.channel.send("Operation Cancelled")
                 await confirmation.clear_reactions()
+    else:
+        await error("[403] You do not have permission to use this command")
             
 
 #-----Command Register------
