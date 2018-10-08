@@ -126,13 +126,13 @@ def get_rank(user):
 @Bot.command(client)
 async def accept(ctx):
     if ctx.message.channel.id == gate:
-        await user_accept_rules(message.author)
+        await user_accept_rules(ctx.message.author)
 
 #!decline
 @Bot.command(client)
 async def deny(ctx):
     if ctx.message.channel.id == gate:
-        await message.author.kick()
+        await ctx.message.author.kick()
 
 #--Profile/Economy Commands--      
 
@@ -191,8 +191,8 @@ async def pay(ctx):
         await message.channel.send("Transaction Rejected\n_ - _ `Insufficient Funds`")
     else:
         user = discord.utils.get(message.guild.members, mention=args[1])
-        if int(args[2]) < 0:
-            await error("[400] Amount cannot be negative", message.channel)
+        if int(args[2]) <= 0:
+            await error("[400] Amount must be higher than 0", message.channel)
             return False
         else:
             amount = args[2]
