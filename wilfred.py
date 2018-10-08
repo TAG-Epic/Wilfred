@@ -56,12 +56,12 @@ def cerror(text): #Error Level Log Output
 def cdebug(text): #Error Level Log Output
     print("[" +str(time.ctime()) +"] [DEBUG] " +text)  
 
-async def error(reason, channel):
-    em = discord.Embed(title="Error", description="An error occurred when attempting to perform that request.\nError: `%s`" % reason, colour=0xFF5555)
+async def error(reason, channel, details=None):
+    em = discord.Embed(title="Error", description="An error occurred when attempting to perform that request. Please check the Syntax and try again.\nError: `%s`" % reason, colour=0xFF5555)
     msg = await channel.send(embed=em)
-    await asyncio.sleep(15)
-    await msg.delete()
-
+    if not details is None:
+        eEm = discord.Embed(title="Error Report", description="An unexpected error occurred in `%s`.\nMessage: `%s`\nError: `%s`" % (channel.name, details.contents, reason), colour=0xFF5555)
+        await client.get_channel(498910225475305483).send(embed=eEm)
 #-----Processing-----
     
 import sqlite3
@@ -584,7 +584,7 @@ async def on_message(message):
                         
 
     except Exception as e:
-        await error("[500] %s" % (e), message.channel)
+        await error("[500] %s" % (e), message.channel, message)
         
 
 
