@@ -393,6 +393,8 @@ async def badge(ctx):
                 user = discord.utils.get(message.guild.members, mention = args[3])
                 execute_query("varsity.db", "UPDATE Members SET %s = 0 WHERE UserID = %s" % (args[2], str(user.id)))
                 await message.channel.send("Sucessfully removed **%s Badge** from %s!" % (args[2], user.mention))
+    else:
+        await error("[403] You do not have permission to use this command")
 
 #!disable
 @Bot.command(client)
