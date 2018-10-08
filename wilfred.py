@@ -8,6 +8,8 @@ from discord.voice_client import VoiceClient
 import _thread as thread
 import random
 
+time.sleep(30) #Give Server time to init networking [Since this is now being autoran under SystemMD] 
+
 import pyspeedtest
 st = pyspeedtest.SpeedTest()
 conCooldown = False
@@ -28,7 +30,7 @@ client = commands.Bot(command_prefix=bot_prefix, case_insensitive=True)
 #-----Helpers-----
 
 def execute_query(table, query):
-    conn = sqlite3.connect(table)
+    conn = sqlite3.connect("/home/pi/varsity-discord"+table)
     c = conn.cursor()
     c.execute(query)
     conn.commit()
@@ -36,7 +38,7 @@ def execute_query(table, query):
     conn.close()
 
 def db_query(table, query):
-    conn = sqlite3.connect(table)
+    conn = sqlite3.connect("/home/pi/varsity-discord"+table)
     c = conn.cursor()
     c.execute(query)
     result = c.fetchall()
