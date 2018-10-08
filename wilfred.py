@@ -373,7 +373,7 @@ async def fight(ctx):
             init = temp
             await asyncio.sleep(4)
     else:
-        await error("[403] You do not have permission to use this command")
+        await error("[403] You do not have permission to use this command",message.channel)
 
 #--Admin Commands--
 
@@ -393,6 +393,8 @@ async def badge(ctx):
                 user = discord.utils.get(message.guild.members, mention = args[3])
                 execute_query("varsity.db", "UPDATE Members SET %s = 0 WHERE UserID = %s" % (args[2], str(user.id)))
                 await message.channel.send("Sucessfully removed **%s Badge** from %s!" % (args[2], user.mention))
+	else:
+		await error("[403] You do not have permission to use this command",message.channel)
 
 #!disable
 @Bot.command(client)
@@ -435,14 +437,14 @@ async def statmod(ctx, *args):
 
             if args[3].upper() == "RANK":
                 if not args[4] in ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]:
-                    await error("[400] Invalid Rank")
+                    await error("[400] Invalid Rank",message.channel)
                 else:    
                     execute_query("varsity.db", "UPDATE Members SET Rank = '%s' WHERE UserID = %s" % (args[4], str(message.author.id)))
                     await message.channel.send(":ok_hand: Successfully set %s's rank to %s!" % (user.mention, args[4]))
 
             if args[3].upper() == "TIER":
                 if not args[4] in range(0, 3):
-                    await error("[400] Invalid Tier")
+                    await error("[400] Invalid Tier",message.channel)
                 else:
                     execute_query("varsity.db", "UPDATE Members SET Tier = %s where UserID = %s" % (str(args[4]), str(message.author.id)))
                     await message.channel.send(":ok_hand: Successfully set %s's tier to %s!" % (user.mention, args[4]))
