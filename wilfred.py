@@ -346,7 +346,7 @@ async def hug(ctx):
         hug_type = random.choice(["just gave you a big hug!", "just gave you a big big hug!", "just gave you a tight squeeze!", "just gave you a bog standard hug!"])
         await ctx.message.channel.send("%s - %s %s :hugging:" % (args[1], ctx.message.author.mention, hug_type))
     else:
-        await error("[403] You do not have permission to use this command")
+        await error("[403] You do not have permission to use this command",ctx.message.channel)
 
 
 
@@ -375,7 +375,7 @@ async def fight(ctx):
             init = temp
             await asyncio.sleep(4)
     else:
-        await error("[403] You do not have permission to use this command")
+        await error("[403] You do not have permission to use this command",message.channel)
 
 #--Admin Commands--
 
@@ -395,6 +395,8 @@ async def badge(ctx):
                 user = discord.utils.get(message.guild.members, mention = args[3])
                 execute_query("varsity.db", "UPDATE Members SET %s = 0 WHERE UserID = %s" % (args[2], str(user.id)))
                 await message.channel.send("Sucessfully removed **%s Badge** from %s!" % (args[2], user.mention))
+	else:
+		await error("[403] You do not have permission to use this command",message.channel)
 
 #!disable
 @Bot.command(client)
@@ -409,6 +411,8 @@ async def disable(ctx, *args):
         if not command in disabled_commands:
             disabled_commands.append(command)
             await message.channel.send(":ok_hand: Successfully disabled `%s`" % command)
+	else:
+		await error("[403] You do not have permission to use this command",message.channel)
 
 #!enable    
 @Bot.command(client)
@@ -422,6 +426,8 @@ async def enable(ctx, *args):
             await message.channel.send(":ok_hand: Successfully enabled `%s`" % command)
         else:
             await error("[409] This command is already enabled", message.channel)
+	else:
+		await error("[403] You do not have permission to use this command",message.channel)
 
 @Bot.command(client)
 async def statmod(ctx, *args):
