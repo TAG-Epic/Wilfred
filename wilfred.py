@@ -242,7 +242,7 @@ async def rankup(ctx):
             await confirmation.add_reaction("\U0001F44E")
 
             def check(reaction, user):
-                return user == message.author and (str(reaction.emoji) == '\U0001F44D' or str(reaction.emoji) == "\U0001F44E")
+                return user == message.author and (str(reaction.emoji) == '\U0001F44D' or str(reaction.emoji) == "\U0001F44E") and reaction.message.id == message.id
             try:
                 reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
             except asyncio.TimeoutError:
