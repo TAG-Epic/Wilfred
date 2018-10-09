@@ -193,6 +193,8 @@ async def pay(ctx):
         await message.channel.send("Transaction Rejected\n_ - _ `Insufficient Funds`")
     else:
         user = discord.utils.get(message.guild.members, mention=args[1])
+		if user = Bot.user:
+			await error("[418] I'm a teapot", message.channel)
         if int(args[2]) <= 0:
             await error("[400] Amount must be higher than 0", message.channel)
             return False
