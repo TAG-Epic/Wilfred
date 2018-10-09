@@ -108,7 +108,7 @@ def get_rank(user):
         rank.append("https://cdn.discordapp.com/emojis/486269879327129601.png")
     elif "Contributor" in [role.name for role in user.roles]:
         rank.append("Contributor")
-        rank.append("https://cdn.discordapp.com/emojis/486265111795728384.png")
+        rank.append("https://cdn.discordapp.com/emojis/498557840760373250.png")
     elif "Artist" in [role.name for role in user.roles]:
         rank.append("Artist")
         rank.append("https://cdn.discordapp.com/emojis/486266771418906626.png")
