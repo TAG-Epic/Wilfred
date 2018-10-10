@@ -125,13 +125,13 @@ def get_rank(user):
 #--Gate Commands--
 
 #!accept
-@Bot.command(client)
+@Bot.command(client,hidden=True)
 async def accept(ctx):
     if ctx.message.channel.id == gate:
         await user_accept_rules(ctx.message.author)
 
 #!decline
-@Bot.command(client)
+@Bot.command(client,hidden=True)
 async def deny(ctx):
     if ctx.message.channel.id == gate:
         await ctx.message.author.kick()
@@ -339,7 +339,7 @@ async def connection(ctx):
 #--Staff Commands--
 
 #!hug
-@Bot.command(client)
+@Bot.command(client,hidden=True)
 async def hug(ctx):
     args = ctx.message.content.split()
     if "Staff" in [role.name for role in ctx.message.author.roles]:
@@ -351,7 +351,7 @@ async def hug(ctx):
 
 
 #!fight
-@Bot.command(client)
+@Bot.command(client,hidden=True)
 async def fight(ctx):
     message = ctx.message
     args = message.content.split()
@@ -380,7 +380,7 @@ async def fight(ctx):
 #--Admin Commands--
 
 #!badge
-@Bot.command(client)
+@Bot.command(client,hidden=True)
 async def badge(ctx):
     message = ctx.message
     args = message.content.split()
@@ -399,7 +399,7 @@ async def badge(ctx):
 		await error("[403] You do not have permission to use this command",message.channel)
 
 #!disable
-@Bot.command(client)
+@Bot.command(client,hidden=True)
 async def disable(ctx, *args):
     message = ctx.message
     args = message.content.split()
@@ -415,7 +415,7 @@ async def disable(ctx, *args):
 		await error("[403] You do not have permission to use this command",message.channel)
 
 #!enable    
-@Bot.command(client)
+@Bot.command(client,hidden=True)
 async def enable(ctx, *args):
     message = ctx.message
     args = message.content.split()
@@ -429,7 +429,7 @@ async def enable(ctx, *args):
 	else:
 		await error("[403] You do not have permission to use this command",message.channel)
 
-@Bot.command(client)
+@Bot.command(client,hidden=True)
 async def statmod(ctx, *args):
     message = ctx.message
     args = message.content.split()
